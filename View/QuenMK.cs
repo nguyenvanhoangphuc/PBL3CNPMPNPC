@@ -85,7 +85,7 @@ namespace QuanLyPhongTroLinQ.View
         public string SendEmail(string email)
         {
             string FromEmail = "p2ncteam@gmail.com";
-            string PWFromEmail = "p2ncteamvip";
+            string PWFromEmail = "vwlhuzgohqjyuwxc";
             Random rand = new Random();
             RandomCode = (rand.Next(999999)).ToString();
             string MessageBody = $"Mã xác nhận của bạn là {RandomCode}";
