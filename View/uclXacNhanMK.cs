@@ -49,6 +49,9 @@ namespace QuanLyPhongTroLinQ.View
 
         private void btnGuiLaiMa_Click(object sender, EventArgs e)
         {
+            txtMaXN.Text = "< > Mã xác nhận";
+            txtMaXN.ForeColor = Color.Silver;
+            lblThongBao.Text = "";
             code = d(em);
         }
 
