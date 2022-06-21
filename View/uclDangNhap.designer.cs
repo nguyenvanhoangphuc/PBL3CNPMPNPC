@@ -159,7 +159,6 @@
             this.txtTenDangNhap.Size = new System.Drawing.Size(375, 30);
             this.txtTenDangNhap.TabIndex = 133;
             this.txtTenDangNhap.Text = "Tên đăng nhập";
-            this.txtTenDangNhap.TextChanged += new System.EventHandler(this.txtTenDangNhap_TextChanged);
             this.txtTenDangNhap.Enter += new System.EventHandler(this.txtTenDangNhap_Enter);
             this.txtTenDangNhap.Leave += new System.EventHandler(this.txtTenDangNhap_Leave);
             // 

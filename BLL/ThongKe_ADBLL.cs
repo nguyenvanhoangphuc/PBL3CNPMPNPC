@@ -11,7 +11,7 @@ namespace QuanLyPhongTroLinQ.BLL
 {
     public class ThongKe_ADBLL
     {
-        QLPT db= new QLPT();
+        QLPT db;
         public int Total = 0;
 
         private static ThongKe_ADBLL _Instance;
@@ -28,17 +28,22 @@ namespace QuanLyPhongTroLinQ.BLL
             private set { }
         }
 
+        public ThongKe_ADBLL()
+        {
+            db = new QLPT();
+        }
+
         public List<string> GetAllYear()
         {
             return db.TienThangs.OrderBy(x => x.NgayThu).Where(x => x.TienPhong != 0).Select(x => x.NgayThu.Year.ToString()).Distinct().ToList();
-                
+
         }
 
         public int GetSoNhanVien()
         {
-            return db.NguoiDungs.Where(x=>x.TuCach=="NhanVien").Count();
+            return db.NguoiDungs.Where(x => x.TuCach == "NhanVien").Count();
         }
-     
+
         public int GetSoNguoiThue()
         {
             return db.NguoiThues.Count();
@@ -49,20 +54,20 @@ namespace QuanLyPhongTroLinQ.BLL
             return db.PhongTros.Count();
         }
 
-        public List<string> GetAllMonth(string nam="All")
+        public List<string> GetAllMonth(string nam = "All")
         {
-            var list= db.TienThangs.Where(x=>(x.NgayThu.Year.ToString() == nam || nam=="All") && x.TienPhong!=0).Select(x=>x.NgayThu.Month).Distinct().ToList();
-            List<string> result= new List<string>();    
-            
-            for(int i=1; i<=12; i++)
-                foreach(int thang in list)
-                    if (i==thang) result.Add(thang.ToString());
+            var list = db.TienThangs.Where(x => (x.NgayThu.Year.ToString() == nam || nam == "All") && x.TienPhong != 0).Select(x => x.NgayThu.Month).Distinct().ToList();
+            List<string> result = new List<string>();
+
+            for (int i = 1; i <= 12; i++)
+                foreach (int thang in list)
+                    if (i == thang) result.Add(thang.ToString());
             return result;
         }
 
         public DataTable GetDSThongKe(string nam, string thang)
         {
-            DataTable dt= new DataTable();
+            DataTable dt = new DataTable();
 
             dt.Columns.AddRange(new DataColumn[] {
 
@@ -74,19 +79,19 @@ namespace QuanLyPhongTroLinQ.BLL
             });
 
             Total = 0;
-            foreach(TienThang sau in db.TienThangs.OrderBy(x=>x.ID_Phong).Where(x=>(x.NgayThu.Year.ToString()==nam || nam=="All") && (x.NgayThu.Month.ToString() == thang || thang=="All") && x.TienPhong != 0))
+            foreach (TienThang sau in db.TienThangs.OrderBy(x => x.ID_Phong).Where(x => (x.NgayThu.Year.ToString() == nam || nam == "All") && (x.NgayThu.Month.ToString() == thang || thang == "All") && x.TienPhong != 0 && x.DaNop == true))
             {
                 TienThang truoc = db.TienThangs.OrderByDescending(x => x.NgayThu).Where(x => x.NgayThu < sau.NgayThu && x.ID_Phong == sau.ID_Phong).FirstOrDefault();
 
-                int TienDien = (sau.ChuNuoc - truoc.ChuNuoc) * sau.TienMotChuNuoc;
+                int TienDien = (sau.ChuDien - truoc.ChuDien) * sau.TienMotChuDien;
                 int TienNuoc = (sau.ChuNuoc - truoc.ChuNuoc) * sau.TienMotChuNuoc;
-                int TienSCTB = TraTienBLL.Instance.GetTienSuaChuaTB(sau.ID_Phong, sau.NgayThu)- TraTienBLL.Instance.GetTienSuaChuaTB(truoc.ID_Phong, truoc.NgayThu);
-                int TongTien= TienDien + TienNuoc + TienSCTB;
+                int TienSCTB = TraTienBLL.Instance.GetTienSuaChuaTB(sau.ID_Phong, sau.NgayThu) - TraTienBLL.Instance.GetTienSuaChuaTB(truoc.ID_Phong, truoc.NgayThu);
+                int TongTien = sau.TienPhong + TienDien + TienNuoc + TienSCTB;
                 Total += TongTien;
 
                 dt.Rows.Add(sau.ID, sau.NgayThu.ToString("d"), ThongKe_ADBLL.Instance.GetTenPhong(sau.ID_Phong), TongTien);
-            } 
-                
+            }
+
             return dt;
         }
 

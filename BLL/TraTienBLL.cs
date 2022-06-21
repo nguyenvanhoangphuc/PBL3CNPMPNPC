@@ -11,7 +11,7 @@ namespace QuanLyPhongTroLinQ.BLL
 {
     public class TraTienBLL
     {
-        QLPT db = new QLPT();
+        QLPT db;
         private static TraTienBLL _Instance;
         public static TraTienBLL Instance
         {
@@ -24,6 +24,11 @@ namespace QuanLyPhongTroLinQ.BLL
                 return _Instance;
             }
             private set { }
+        }
+
+        public TraTienBLL()
+        {
+            db = new QLPT();
         }
 
         public TienThang EpVeTienThang(string ID, string ID_Phong, DateTime NgayThu, int TienPhong, int ChuDien, int ChuNuoc, int TienMotChuDien, int TienMotChuNuoc, bool DaNop)
@@ -55,7 +60,7 @@ namespace QuanLyPhongTroLinQ.BLL
             {
                 bool have = false;
                 foreach (TienThang t in db.TienThangs)
-                    if (p.ID == t.ID_Phong)
+                    if (p.ID == t.ID_Phong && t.TienPhong == 0)
                     {
                         have = true;
                         break;
@@ -72,7 +77,7 @@ namespace QuanLyPhongTroLinQ.BLL
 
         public DateTime GetNgayThuMoiNhat(string iD_Phong)
         {
-            TienThang t = db.TienThangs.Where(x=> x.ID_Phong == iD_Phong).OrderByDescending(x=>x.NgayThu).FirstOrDefault();
+            TienThang t = db.TienThangs.Where(x => x.ID_Phong == iD_Phong).OrderByDescending(x => x.NgayThu).FirstOrDefault();
             return t.NgayThu;
         }
 
@@ -94,20 +99,22 @@ namespace QuanLyPhongTroLinQ.BLL
                 new DataColumn("Tên phòng"),
                 new DataColumn("Số tháng nợ"),
             });
-            List<PhongTro> list= db.PhongTros.Where(x => x.TinhTrang == true && x.TenPhong.Contains(s)).ToList();
+            List<PhongTro> list = db.PhongTros.Where(x => x.TinhTrang == true && x.TenPhong.Contains(s)).ToList();
 
 
-            foreach (PhongTro p in list) {
+            foreach (PhongTro p in list)
+            {
                 int cnt = db.TienThangs.Where(x => x.ID_Phong == p.ID && x.DaNop == false).Count();
                 if (cahai)
                     dt.Rows.Add(p.ID, p.TenPhong, cnt);
                 else
-                if (danop) {
+                if (danop)
+                {
                     if (cnt == 0) dt.Rows.Add(p.ID, p.TenPhong, cnt);
                 }
                 else
                     if (!danop)
-                        if (cnt > 0) dt.Rows.Add(p.ID, p.TenPhong, cnt);
+                    if (cnt > 0) dt.Rows.Add(p.ID, p.TenPhong, cnt);
             }
             return dt;
         }
@@ -145,7 +152,7 @@ namespace QuanLyPhongTroLinQ.BLL
             dt.Columns.AddRange(new DataColumn[] {
                 new DataColumn("ID"),
                 new DataColumn("Ngày thu tiền"),
-                new DataColumn("Tiền phòng"), 
+                new DataColumn("Tiền phòng"),
                 new DataColumn("Tiền một chữ điện"),
                 new DataColumn("Số chữ điện"),
                 new DataColumn("Tiền điện"),
@@ -192,7 +199,7 @@ namespace QuanLyPhongTroLinQ.BLL
 
         public void SuaThangMoiNhat(string ID, TienThang y)
         {
-            var x=db.TienThangs.Find(ID);
+            var x = db.TienThangs.Find(ID);
             x.ChuDien = y.ChuDien;
             x.ChuNuoc = y.ChuNuoc;
             x.NgayThu = y.NgayThu;
@@ -204,12 +211,12 @@ namespace QuanLyPhongTroLinQ.BLL
 
         public string XuatHoaDon(string ID_Phong, string TenPhong, DataGridView dgv_DSThang)
         {
-            string s = "\nPHÒNG : "+TenPhong+"\n\n";
+            string s = "\nPHÒNG : " + TenPhong + "\n\n";
             s += "Gửi người thuê:\n\n";
 
             foreach (QLDatPhong qldp in PhongTroBLL.Instance.GetPhongByID(ID_Phong).QLDatPhongs)
                 if (qldp.ID_Phong == ID_Phong)
-                    s += "\t"+NguoiThueBLL.Instance.GetTenNguoiThueByID(qldp.ID_NguoiThue)+"\n";
+                    s += "\t" + NguoiThueBLL.Instance.GetTenNguoiThueByID(qldp.ID_NguoiThue) + "\n";
             s += "\n\n\tHÓA ĐƠN CÁC THÁNG CẦN NỘP TIỀN\n\n\n";
 
             int total = 0;
@@ -231,7 +238,7 @@ namespace QuanLyPhongTroLinQ.BLL
                     total += Convert.ToInt32(r.Cells["Tổng tiền tháng này"].Value.ToString());
                 }
             }
-            s += "\nTỔNG TIỀN CẦN THANH TOÁN : " + total.ToString()+" VND\n";
+            s += "\nTỔNG TIỀN CẦN THANH TOÁN : " + total.ToString() + " VND\n";
 
             return s;
         }

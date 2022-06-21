@@ -9,7 +9,7 @@ namespace QuanLyPhongTroLinQ.BLL
 {
     public class NguoiThueBLL
     {
-        QLPT db = new QLPT();
+        QLPT db;
         private static NguoiThueBLL _Instance;
         public static NguoiThueBLL Instance
         {
@@ -22,6 +22,11 @@ namespace QuanLyPhongTroLinQ.BLL
                 return _Instance;
             }
             private set { }
+        }
+
+        public NguoiThueBLL()
+        {
+            db = new QLPT();
         }
 
         public DataTable GetAllNguoiThueView(string s = "", bool HVT = false, bool SDT = false, bool QQ = false, bool CCCD = false, bool DT = false)
@@ -59,22 +64,22 @@ namespace QuanLyPhongTroLinQ.BLL
         }
         public List<NguoiThue> GetNguoiThueByPhongTro(string ID)
         {
-            List<NguoiThue> nguoiThues = new List<NguoiThue> ();
+            List<NguoiThue> nguoiThues = new List<NguoiThue>();
             foreach (string Id in GetIDNguoiThueByPhongTro(ID))
             {
                 nguoiThues.Add(GetNguoiThueByID(Id));
             }
-            return nguoiThues; 
+            return nguoiThues;
         }
 
         private NguoiThue GetNguoiThueByID(string id)
         {
-            return db.NguoiThues.Find(id); 
+            return db.NguoiThues.Find(id);
         }
 
         public List<string> GetIDNguoiThueByPhongTro(string ID)
         {
-            return db.QLDatPhongs.Where(p => p.ID_Phong == ID).Select(p=>p.ID_NguoiThue).ToList(); 
+            return db.QLDatPhongs.Where(p => p.ID_Phong == ID).Select(p => p.ID_NguoiThue).ToList();
         }
 
         public List<NguoiThue> GetAllNguoiThue(string s, bool HVT, bool SDT, bool QQ, bool CCCD, bool DT)
